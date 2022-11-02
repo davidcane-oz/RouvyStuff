@@ -2,8 +2,6 @@ import json
 import os
 import sys
 
-from numpy import False_
-
 def extract_level( str_level, str_id):
 
     if str_level.startswith(str_id): 
@@ -81,7 +79,7 @@ def is_achievement( element ):
 #write 2 x 2 tables for distance, climber, kcal and active time
 
 def get_achievement_html( data ) :
-    achievement_levels = ["total-distance-level-","climber-level-","burn-kcal-level-","active-time-level-" ]
+    achievement_levels = ["total-distance-level-","climber-level-","burn-kcal-level-","active-time-level-", "outdoor" ]
     columns = ["Achievement", "Unlocked at", "Points"]
     n = 1
     str_html = ''
@@ -89,12 +87,11 @@ def get_achievement_html( data ) :
     
     for achievement_level in achievement_levels:
         First = True
-        if n==1 or n==3:
+        if n==1 or n==3 or n==5:
             if n==3:
                 str_html += '<div style="clear:both;height:48px;"></div>'
-
             str_html += '<div class="container">\n<table>\n<td>\n<table class="table1">\n'
-        else:
+        elif n == 2 or n == 4:
             str_html += '<td>\n<table class="table2">\n'
 
         last_element=None
@@ -103,6 +100,10 @@ def get_achievement_html( data ) :
                 element_data=None
                 if is_unlocked( element['unlockedAt'] ):
                     element_data = [element['title'], element['unlockedAt'][:10], str(element['points'])]
+                    if n==5:
+                        lookfor = achievement_level+f"{(extract_level(element['id'], achievement_level)+1):03d}"
+                    else:
+                        lookfor = achievement_level+f"{(extract_level(element['id'], achievement_level)+1)}"
                     last_element = element
                 else:
                     if (element['id'] == lookfor):
@@ -110,7 +111,7 @@ def get_achievement_html( data ) :
                         goal = int (element["goalsToAchieve"][0]["value"])
                         progress = int (element["goalsProgress"][0]["value"])
                         element_data = [element['title'], f"{(progress-start)*100/(goal-start):.0f}% done", str(element['points'])]
-
+       
                 if element_data:
                     if First:
                         str_html += table_head
@@ -119,10 +120,10 @@ def get_achievement_html( data ) :
 
         str_html += '</table>\n</td>\n'
 
-        if n==2 or n==4:
+        if n==2 or n==4 or n==5:
             str_html += '</table>\n</div>\n'
-            if n==4:
-                str_html += '<div style="clear:both;height:48px;"></div>\n'
+        if n==5:
+            str_html += '<div style="clear:both;height:48px;"></div>\n'
         
         n+=1
 
