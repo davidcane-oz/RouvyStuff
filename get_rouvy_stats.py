@@ -105,7 +105,7 @@ def get_achievement_html( data ) :
                     element_data = [element['title'], element['unlockedAt'][:10], str(element['points'])]
                     last_element = element
                 else:
-                    if 'successorOf' in element and 'id' in last_element and element["successorOf"] == last_element["id"]:
+                    if (element['id'] == lookfor):
                         start = int (last_element["goalsToAchieve"][0]["value"])
                         goal = int (element["goalsToAchieve"][0]["value"])
                         progress = int (element["goalsProgress"][0]["value"])
